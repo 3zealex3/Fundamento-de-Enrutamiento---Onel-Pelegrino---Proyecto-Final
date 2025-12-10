@@ -6,7 +6,7 @@ Configuración completa de una red empresarial con múltiples VLANs, enrutamient
 ## 🎯 Tareas Implementadas
 
 ### 1. Configuración SSH
-- Usuario: `matricula` / Contraseña: `Fe2024`
+- Usuario: `20242286` / Contraseña: `Fe2024`
 - Usuario: `opelegrino` / Contraseña cifrada: `Fe2024`
 
 ### 2. Configuración de VLANs
