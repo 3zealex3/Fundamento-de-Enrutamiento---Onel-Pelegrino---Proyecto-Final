@@ -1,230 +1,129 @@
-Esquema de README - Proyecto de Configuración de Red
-Descripción del Proyecto
-Documentación técnica de la configuración de una red empresarial completa que incluye VLANs, enrutamiento, HSRP, DHCP, agregación de enlaces, redes inalámbricas y conectividad total.
+# Proyecto de Configuración de Red - Topología Completa
 
-Tabla de Contenidos
-Topología de Red
+## 📋 Descripción
+Configuración completa de una red empresarial con múltiples VLANs, enrutamiento, HSRP, DHCP, agregación de enlaces y redes inalámbricas.
 
-Requisitos y Tareas
+## 🎯 Tareas Implementadas
 
-Configuraciones por Equipo
+### 1. Configuración SSH
+- Usuario: `matricula` / Contraseña: `Fe2024`
+- Usuario: `opelegrino` / Contraseña cifrada: `Fe2024`
 
-Diagrama de Direccionamiento IP
+### 2. Configuración de VLANs
+| VLAN | Nombre   | Red              |
+|------|----------|------------------|
+| 300  | Vlan300  | 172.16.300.0/24  |
+| 500  | Vlan500  | 172.16.500.0/24  |
+| 999  | Vlan999  | 172.16.999.0/24  |
 
-Procedimientos de Configuración
+### 3. Enrutamiento entre VLANs
+- Router-on-a-stick configurado
+- Interfaces troncales establecidas
 
-Verificación y Pruebas
+### 4. HSRP (First Hop Redundancy Protocol)
+- **R4**: Router Activo para VLANs 300, 500, 999
+- **R1**: Router en espera
+- **Gateway virtual**: Primera IP utilizable
+- **R1**: Segunda IP utilizable
+- **R4**: Tercera IP utilizable
 
-Archivos de Configuración
+### 5. Spanning Tree Protocol
+- **SW1**: Root Bridge para VLANs 300, 500, 999
+- Prioridad configurada: 4096
 
-Topología de Red
-text
-[Diagrama de la topología de red con equipos y conexiones]
-- Routers: R1, R2, R3, R4
-- Switches: SW1, SW2, SW3, SW4
-- Access Points: AP-BIBLIOTECA, AP-LOBBY
-- PCs: Múltiples segmentos
-Requisitos y Tareas
-✅ Tarea 1: Configuración de Acceso SSH
-Usuario: matricula | Contraseña: Fe2024
+### 6. Direccionamiento IP
+- Direcciones estáticas según tabla
+- Switches con IPs de gestión en VLAN 999
 
-Usuario: opelegrino | Contraseña cifrada: Fe2024
+### 7. Servidor DHCP en R2
+- Pools configurados para todas las redes
+- Exclusión de direcciones fijas
 
-✅ Tarea 2: Configuración de VLANs
-VLAN	Nombre	Red	Descripción
-300	Vlan300	172.16.300.0/24	Red de departamento
-500	Vlan500	172.16.500.0/24	Red de servidores
-999	Vlan999	172.16.999.0/24	Red de gestión
-✅ Tarea 3: Enrutamiento entre VLANs
-Configurar router-on-a-stick o SVI según corresponda
+### 8. Agregación de Enlaces (LACP)
+- EtherChannel entre switches
+- Protocolo: LACP (modo active)
 
-Interfaces troncales entre switches
+### 9. Enrutamiento Estático
+- Rutas configuradas para conectividad total
+- Rutas por defecto donde aplica
 
-✅ Tarea 4: Configuración HSRP
-R4: Router Activo para VLANs 300, 500, 999
+### 10. Redes Inalámbricas
+| Access Point | Perfiles SSID    |
+|--------------|------------------|
+| BIBLIOTECA   | Duarte, Sánchez  |
+| LOBBY        | Mella, Duarte    |
 
-R1: Router en espera
+### 11. Seguridad Wireless
+- WPA2-Personal en todos los SSID
+- Contraseña: `Cisco123`
+- Usuario Admin configurado
 
-Gateway virtual: Primera dirección utilizable
+### 12. Verificación de Conectividad
+- Ping exitoso entre todos los dispositivos
+- Conectividad switch-switch verificada
 
-R1 dirección: Segunda dirección utilizable
+### 13. Guardado de Configuraciones
+- Configuraciones guardadas en todos los equipos
 
-R4 dirección: Tercera dirección utilizable
+## 🔧 Configuraciones por Equipo
 
-✅ Tarea 5: Puente Raíz (Root Bridge)
-SW1: Root Bridge para VLANs 300, 500, 999
+### Routers
+- **R1**: SSH, VLANs, HSRP (standby), enrutamiento
+- **R2**: DHCP, enrutamiento, servidor central
+- **R3**: Enrutamiento, conectividad inter-VLAN
+- **R4**: SSH, VLANs, HSRP (active), enrutamiento
 
-Prioridad ajustada: 4096
+### Switches
+- **SW1**: VLANs, Root Bridge, LACP, gestión
+- **SW2**: VLANs, LACP, trunking
+- **SW3**: VLANs, LACP, trunking
+- **SW4**: VLANs, LACP, trunking
 
-✅ Tarea 6: Direccionamiento IP
-Configurar direcciones según tabla proporcionada
+### Access Points
+- **AP-BIBLIOTECA**: SSID Duarte y Sánchez
+- **AP-LOBBY**: SSID Mella y Duarte
 
-Incluir switches con direcciones de gestión
+## 📊 Esquema de Direccionamiento
 
-✅ Tarea 7: Servidor DHCP en R2
-Configurar pools DHCP para todas las redes
+### VLAN 300 (Departamentos)
+- Red: 172.16.300.0/24
+- Gateway: 172.16.300.1
+- R1: 172.16.300.2
+- R4: 172.16.300.3
+- DHCP: 172.16.300.10-254
 
-Excluir direcciones de gateway y dispositivos fijos
+### VLAN 500 (Servidores)
+- Red: 172.16.500.0/24
+- Gateway: 172.16.500.1
+- R1: 172.16.500.2
+- R4: 172.16.500.3
+- DHCP: 172.16.500.10-254
 
-✅ Tarea 8: Agregación de Enlaces (LACP)
-Configurar EtherChannel entre switches
+### VLAN 999 (Gestión)
+- Red: 172.16.999.0/24
+- Gateway: 172.16.999.1
+- R1: 172.16.999.2
+- R4: 172.16.999.3
+- Switches: 172.16.999.10-20
 
-Protocolo: LACP
+## ✅ Verificación
 
-Modo: active/active
-
-✅ Tarea 9: Enrutamiento Estático
-Configurar rutas estáticas para conectividad total
-
-Rutas por defecto donde corresponda
-
-✅ Tarea 10: Redes Inalámbricas
-AP	Perfiles SSID
-AP-BIBLIOTECA	Duarte, Sánchez
-AP-LOBBY	Mella, Duarte
-✅ Tarea 11: Seguridad Wireless
-Protocolo: WPA2-Personal
-
-Contraseña: Cisco123
-
-Usuario Admin configurado
-
-✅ Tarea 12: Verificación de Conectividad
-Ping entre todos los dispositivos
-
-Verificación de conectividad switch a switch
-
-✅ Tarea 13: Guardar Configuraciones
-copy running-config startup-config en todos los dispositivos
-
-Configuraciones por Equipo
-Routers
-R1
-cisco
-! Configuración SSH, VLANs, HSRP, Enrutamiento
-R2
-cisco
-! Configuración DHCP, Enrutamiento
-R3
-cisco
-! Configuración Enrutamiento
-R4
-cisco
-! Configuración HSRP activo, Enrutamiento
-Switches
-SW1 (Root Bridge)
-cisco
-! Configuración VLANs, STP, LACP, Direccionamiento
-SW2, SW3, SW4
-cisco
-! Configuración VLANs, LACP, Trunking
-Access Points
-AP-BIBLIOTECA
-cisco
-! SSID: Duarte, Sánchez | Seguridad WPA2
-AP-LOBBY
-cisco
-! SSID: Mella, Duarte | Seguridad WPA2
-Diagrama de Direccionamiento IP
-VLAN 300
-Red: 172.16.300.0/24
-
-Gateway virtual: 172.16.300.1
-
-R1: 172.16.300.2
-
-R4: 172.16.300.3
-
-Rango DHCP: 172.16.300.10-254
-
-VLAN 500
-Red: 172.16.500.0/24
-
-Gateway virtual: 172.16.500.1
-
-R1: 172.16.500.2
-
-R4: 172.16.500.3
-
-Rango DHCP: 172.16.500.10-254
-
-VLAN 999
-Red: 172.16.999.0/24
-
-Gateway virtual: 172.16.999.1
-
-R1: 172.16.999.2
-
-R4: 172.16.999.3
-
-Switches: 172.16.999.10-20
-
-Procedimientos de Configuración
-1. Configuración Inicial
-bash
-enable
-configure terminal
-hostname [NOMBRE_DISPOSITIVO]
-2. Configuración SSH
-cisco
-enable secret Fe2024
-username matricula password Fe2024
-username opelegrino secret Fe2024
-ip domain-name ejemplo.com
-crypto key generate rsa modulus 2048
-line vty 0 15
- transport input ssh
- login local
-3. Configuración de VLANs
-cisco
-vlan 300
- name Vlan300
-vlan 500
- name Vlan500
-vlan 999
- name Vlan999
-4. Configuración HSRP
-cisco
-interface Vlan300
- ip address 172.16.300.3 255.255.255.0
- standby 1 ip 172.16.300.1
- standby 1 priority 150
- standby 1 preempt
-5. Configuración DHCP en R2
-cisco
-ip dhcp pool Vlan300
- network 172.16.300.0 255.255.255.0
- default-router 172.16.300.1
- dns-server 8.8.8.8
-Verificación y Pruebas
-Comandos de Verificación
-bash
-# Verificar VLANs
+### Comandos de Verificación
+```bash
+# Ver estado de VLANs
 show vlan brief
 
-# Verificar HSRP
+# Ver estado HSRP
 show standby brief
 
-# Verificar DHCP
+# Ver bindings DHCP
 show ip dhcp binding
 
-# Verificar EtherChannel
+# Ver EtherChannel
 show etherchannel summary
 
-# Verificar conectividad
-ping [IP_DESTINO]
-
-# Verificar rutas
+# Ver rutas
 show ip route
 
-# Verificar STP
+# Ver spanning-tree
 show spanning-tree vlan 300,500,999
-Pruebas de Conectividad
-PC VLAN300 → PC VLAN500 ✓
-
-PC VLAN300 → Internet ✓
-
-Switch → Router ✓
-
-Wireless → Red cableada ✓
-
