@@ -1,0 +1,539 @@
+-----------------SW1--------------------
+enable
+configure terminal
+hostname SW1
+ip domain-name Los_Estimados.com
+
+spanning-tree mode rapid-pvst
+
+crypto key generate rsa
+1024
+line vty 0 15
+transport input ssh
+exec-timeout 5 0
+exit
+
+username 20242286 privilege 15 password Fe2024
+username opelegrino privilege 15 password Fe2024
+
+
+service password-encryption
+
+enable secret Fe2024
+
+
+ip ssh version 2
+
+
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+
+spanning-tree vlan 300 root primary
+spanning-tree vlan 500 root primary
+spanning-tree vlan 999 root primary
+
+
+
+vtp domain Los_Estimados
+vtp mode server
+vtp version 2
+vtp password Cisco123
+
+vlan 500
+name Academicos
+vlan 300
+name Estudiantes
+vlan 999
+name Nativa-Administrativa
+
+
+int range fa0/1-24, gi0/1-2
+switchport mode access 
+switchport access vlan 999
+
+
+int range fa0/9, fa0/17
+switchport access vlan 500
+no shutdown
+
+
+int range fa0/6, fa0/20
+switchport access vlan 300
+no shutdown
+
+
+int range fa0/23-24
+switchport mode trunk
+switchport trunk allowed vlan 300,500,999
+switchport trunk native vlan 999
+channel-group 1 mode active
+switchport nonegotiate
+no shutdown
+
+
+int gi0/2
+switchport mode trunk
+switchport mode trunk
+switchport trunk allowed vlan 300,500,999
+switchport trunk native vlan 999
+switchport nonegotiate
+no shutdown
+
+int vlan 999
+ip address 192.168.99.4 255.255.255.0
+no shutdown
+
+ip default-gateway 192.168.99.1
+
+do wr
+end
+exit
+
+
+----------SW2--------------------
+enable
+configure terminal
+hostname SW2
+ip domain-name Los_Estimados.com
+
+spanning-tree mode rapid-pvst
+
+crypto key generate rsa
+1024
+line vty 0 15
+transport input ssh
+exec-timeout 5 0
+exit
+
+
+username 20242286 privilege 15 password Fe2024
+username opelegrino privilege 15 password Fe2024
+
+
+service password-encryption
+
+enable secret Fe2024
+
+
+ip ssh version 2
+
+
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+
+spanning-tree vlan 300 root secondary
+spanning-tree vlan 500 root secondary
+spanning-tree vlan 999 root secondary
+
+
+
+vtp domain Los_Estimados
+vtp mode server
+vtp version 2
+vtp password Cisco123
+
+
+vlan 500
+name Academicos
+vlan 300
+name Estudiantes
+vlan 999
+name Nativa-Administrativa
+
+
+int range fa0/1-24, gi0/1-2
+switchport mode access 
+switchport access vlan 999
+
+
+int range fa0/9, fa0/17
+switchport access vlan 500
+no shutdown
+
+
+int range fa0/6, fa0/20
+switchport access vlan 300
+no shutdown
+
+
+int range fa0/23-24
+switchport mode trunk
+switchport trunk allowed vlan 300,500,999
+switchport trunk native vlan 999
+channel-group 1 mode active
+switchport nonegotiate
+no shutdown
+
+
+int gi0/2
+switchport mode trunk
+switchport mode trunk
+switchport trunk allowed vlan 300,500,999
+switchport trunk native vlan 999
+switchport nonegotiate
+no shutdown
+
+int vlan 999
+ip address 192.168.99.5 255.255.255.0
+no shutdown
+
+ip default-gateway 192.168.99.1
+do wr
+end
+exit
+
+
+----------------------R1-----------------
+enable
+configure terminal
+hostname R1-C
+ip domain-name Los_Estimados.com
+
+spanning-tree mode rapid-pvst
+
+crypto key generate rsa
+1024
+line vty 0 15
+transport input ssh
+exec-timeout 5 0
+exit
+
+username 20242286 privilege 15 password Fe2024
+username opelegrino privilege 15 password Fe2024
+
+
+service password-encryption
+
+enable secret Fe2024
+
+
+ip ssh version 2
+
+
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+int gi0/0.300
+encapsulation dot1q 300
+ip address 192.168.30.2 255.255.255.0
+ip helper-address 192.168.100.2
+standby version 2
+standby 1 ip 192.168.30.1
+standby 1 priority 90
+standby 1 preempt
+
+int gi0/0.500
+encapsulation dot1q 500
+ip address 192.168.50.2 255.255.255.0
+ip helper-address 192.168.100.2
+standby version 2
+standby 2 ip 192.168.50.1
+standby 2 priority 90
+standby 2 preempt
+
+int gi0/0.999
+encapsulation dot1q 999 native
+ip address 192.168.99.2 255.255.255.0
+ip helper-address 192.168.100.2
+standby version 2
+standby 3 ip 192.168.99.1
+standby 3 priority 90
+standby 3 preempt
+
+
+int gi0/0
+no shutdown
+
+
+int gi0/1
+ip address 192.168.100.1 255.255.255.252
+no shutdown
+
+
+ip route 192.168.100.8 255.255.255.252 192.168.100.2
+ip route 192.168.100.4 255.255.255.252 192.168.100.2
+ip route 192.168.32.0 255.255.255.0 192.168.100.2
+
+do wr
+end
+exit
+
+--------------------------R2-----------------------------
+
+enable
+configure terminal
+hostname R2-C
+ip domain-name Los_Estimados.com
+
+spanning-tree mode rapid-pvst
+
+crypto key generate rsa
+1024
+line vty 0 15
+transport input ssh
+exec-timeout 5 0
+exit
+
+username 20242286 privilege 15 password Fe2024
+username opelegrino privilege 15 password Fe2024
+
+
+service password-encryption
+
+enable secret Fe2024
+
+
+ip ssh version 2
+
+
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+
+int gi0/1
+ip address 192.168.100.2 255.255.255.252
+no shutdown
+
+int se0/0/0
+ip address 192.168.100.10 255.255.255.252
+no shutdown
+
+int se0/0/1
+ip address 192.168.100.6 255.255.255.252
+no shutdown
+
+
+
+
+ip route 192.168.30.0 255.255.255.0 192.168.100.9 1
+ip route 192.168.50.0 255.255.255.0 192.168.100.9 1
+ip route 192.168.99.0 255.255.255.0 192.168.100.9 1
+
+ip route 192.168.30.0 255.255.255.0 192.168.100.1 10
+ip route 192.168.50.0 255.255.255.0 192.168.100.1 10
+ip route 192.168.99.0 255.255.255.0 192.168.100.1 10
+
+ip route 192.168.32.0 255.255.255.0 192.168.100.5
+
+
+ip dhcp excluded-address 192.168.30.1 192.168.30.10
+ip dhcp excluded-address 192.168.50.1 192.168.50.10
+
+
+ip dhcp pool Estudiantes
+network 192.168.30.0 255.255.255.0
+default-router 192.168.30.1
+dns-server 192.168.32.5
+
+ip dhcp pool Academicos
+network 192.168.50.0 255.255.255.0
+default-router 192.168.50.1
+dns-server 192.168.32.5
+
+
+do wr
+end
+exit
+
+
+-----------------------------R3--------------------
+
+enable
+configure terminal
+hostname R3-C
+ip domain-name Los_Estimados.com
+
+spanning-tree mode rapid-pvst
+
+crypto key generate rsa
+1024
+line vty 0 15
+transport input ssh
+exec-timeout 5 0
+exit
+
+username 20242286 privilege 15 password Fe2024
+username opelegrino privilege 15 password Fe2024
+
+
+service password-encryption
+
+enable secret Fe2024
+
+
+ip ssh version 2
+
+
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+
+int gi0/0
+ip address 192.168.32.1 255.255.255.0
+no shutdown
+
+
+int se0/0/0
+ip address 192.168.100.5 255.255.255.252
+no shutdown
+
+ip route 192.168.30.0 255.255.255.0 192.168.100.6
+ip route 192.168.50.0 255.255.255.0 192.168.100.6
+ip route 192.168.99.0 255.255.255.0 192.168.100.6
+ip route 192.168.100.0 255.255.255.252 192.168.100.6
+ip route 192.168.100.8 255.255.255.0 192.168.100.6
+
+do wr
+end
+exit
+
+-----------------------------R4--------------------
+
+enable
+configure terminal
+hostname R4-C
+ip domain-name Los_Estimados.com
+
+spanning-tree mode rapid-pvst
+
+crypto key generate rsa
+1024
+line vty 0 15
+transport input ssh
+exec-timeout 5 0
+exit
+
+username 20242286 privilege 15 password Fe2024
+username opelegrino privilege 15 password Fe2024
+
+
+service password-encryption
+
+enable secret Fe2024
+
+
+ip ssh version 2
+
+
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+int gi0/1.300
+encapsulation dot1q 300
+ip address 192.168.30.3 255.255.255.0
+ip helper-address 192.168.100.10
+standby version 2
+standby 1 ip 192.168.30.1
+standby 1 priority 110
+standby 1 preempt
+
+int gi0/1.500
+encapsulation dot1q 500
+ip address 192.168.50.3 255.255.255.0
+ip helper-address 192.168.100.10
+standby version 2
+standby 2 ip 192.168.50.1
+standby 2 priority 110
+standby 2 preempt
+
+int gi0/1.999
+encapsulation dot1q 999 native
+ip address 192.168.99.3 255.255.255.0
+no ip helper-address 192.168.100.2
+standby version 2
+standby 3 ip 192.168.99.1
+standby 3 priority 110
+standby 3 preempt
+
+
+int gi0/1
+no shutdown
+
+int se0/0/0
+ip address 192.168.100.9 255.255.255.252
+no shutdown
+
+
+ip route 192.168.100.0 255.255.255.252 192.168.100.10
+ip route 192.168.100.4 255.255.255.252 192.168.100.10
+ip route 192.168.32.0 255.255.255.0 192.168.100.10
+
+do wr
+end
+exit
+
+int gi0/1.300
+no ip helper-address 192.168.100.2
+ip helper-address 192.168.100.10
+int gi0/1.500
+no ip helper-address 192.168.100.2
+ip helper-address 192.168.100.10
+
+
+--------------------SW3-----------------------------
+enable
+configure terminal
+hostname SW3
+ip domain-name Los_Estimados.com
+
+spanning-tree mode rapid-pvst
+
+crypto key generate rsa
+1024
+line vty 0 15
+transport input ssh
+exec-timeout 5 0
+exit
+
+username 20242286 privilege 15 password Fe2024
+username opelegrino privilege 15 password Fe2024
+
+
+service password-encryption
+
+enable secret Fe2024
+
+
+ip ssh version 2
+
+
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+
+vlan 500
+name Academicos
+vlan 300
+name Estudiantes
+vlan 999
+name Nativa-Administrativa
+
+
+int range fa0/1-24, gi0/1-2
+switchport mode access 
+switchport access vlan 999
+
+
+int range fa0/1-2, gi0/1-2
+switchport mode trunk
+switchport trunk allowed vlan 300,500,999
+switchport trunk native vlan 999
+switchport nonegotiate
+no shutdown
+
+
+vlan 32 
+name MGMT-WLC
+exit
+
+int vlan 32
+ip address 192.168.32.2 255.255.255.0
+
+
+ip default-gateway 192.168.32.1
+
+do wr
+end
+exit
